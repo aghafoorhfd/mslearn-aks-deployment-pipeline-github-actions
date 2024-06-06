@@ -1,7 +1,25 @@
-FROM nginx:1.18
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && apt-get update -y && apt-get install -y git curl nodejs && curl -sL https://github.com/gohugoio/hugo/releases/download/v0.72.0/hugo_extended_0.72.0_Linux-64bit.tar.gz | tar -xz hugo && mv hugo /usr/bin && npm i -g postcss-cli autoprefixer postcss
-RUN git clone https://github.com/MicrosoftDocs/mslearn-aks-deployment-pipeline-github-actions /contoso-website
-WORKDIR /contoso-website/src
-RUN git submodule update --init themes/introduction
-RUN hugo && mv public/* /usr/share/nginx/html
-EXPOSE 80
+# Stage 1
+FROM alpine:latest AS build
+
+# Install the Hugo go app.
+RUN apk add --update hugo
+
+WORKDIR /opt/HugoApp
+
+# Copy Hugo config into the container Workdir.
+COPY . .
+
+# Run Hugo in the Workdir to generate HTML.
+RUN hugo 
+
+# Stage 2
+FROM nginx:1.25-alpine
+
+# Set workdir to the NGINX default dir.
+WORKDIR /usr/share/nginx/html
+
+# Copy HTML from previous build into the Workdir.
+COPY --from=build /opt/HugoApp/public .
+
+# Expose port 80
+EXPOSE 80/tcp
