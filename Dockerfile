@@ -1,25 +1,8 @@
-# Stage 1
-FROM alpine:latest AS build
+# Use the official Nginx image from Docker Hub
+FROM nginx:alpine
 
-# Install the Hugo go app.
-RUN apk add --update hugo
+# Copy the HTML file to the default Nginx HTML location
+COPY index.html /usr/share/nginx/html/
 
-WORKDIR /opt/HugoApp
-
-# Copy Hugo config into the container Workdir.
-COPY . .
-
-# Run Hugo in the Workdir to generate HTML.
-RUN hugo 
-
-# Stage 2
-FROM nginx:1.25-alpine
-
-# Set workdir to the NGINX default dir.
-WORKDIR /usr/share/nginx/html
-
-# Copy HTML from previous build into the Workdir.
-COPY --from=build /opt/HugoApp/public .
-
-# Expose port 80
-EXPOSE 80/tcp
+# Expose port 80 to the outside world
+EXPOSE 80
