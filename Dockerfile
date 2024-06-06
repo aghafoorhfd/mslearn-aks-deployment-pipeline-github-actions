@@ -1,7 +1,23 @@
-FROM nginx:1.18
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && apt-get update -y && apt-get install -y git curl nodejs && curl -sL https://github.com/gohugoio/hugo/releases/download/v0.72.0/hugo_extended_0.72.0_Linux-64bit.tar.gz | tar -xz hugo && mv hugo /usr/bin && npm i -g postcss-cli autoprefixer postcss
-RUN git clone https://github.com/MicrosoftDocs/mslearn-aks-deployment-pipeline-github-actions /contoso-website
+# Use a base image that includes Hugo and Nginx
+FROM klakegg/hugo:ext-alpine AS builder
+
+# Set the working directory
 WORKDIR /contoso-website/src
+
+# Copy the project files to the working directory
+COPY . .
+
+# Update submodules
 RUN git submodule update --init themes/introduction
-RUN hugo && mv public/* /usr/share/nginx/html
+
+# Run Hugo to generate the static site
+RUN hugo
+
+# Use a lightweight Nginx image for serving the static site
+FROM nginx:alpine
+
+# Copy the generated files from the builder stage to the Nginx web root
+COPY --from=builder /contoso-website/src/public /usr/share/nginx/html
+
+# Expose port 80
 EXPOSE 80
