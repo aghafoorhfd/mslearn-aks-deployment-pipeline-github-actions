@@ -1,14 +1,20 @@
-# Use a base image that includes Hugo and Nginx
+# Use a base image that includes Hugo and Git
 FROM klakegg/hugo:ext-alpine AS builder
 
 # Set the working directory
 WORKDIR /contoso-website/src
 
+# Install Git (if not already included in the Hugo image)
+RUN apk update && apk add --no-cache git
+
 # Copy the project files to the working directory
 COPY . .
 
-# Update submodules
-RUN git submodule update --init themes/introduction
+# Print the contents of the .gitmodules file for debugging
+RUN cat .gitmodules
+
+# Update submodules with verbose output for better debugging
+RUN git submodule update --init --recursive --progress
 
 # Run Hugo to generate the static site
 RUN hugo
