@@ -57,6 +57,11 @@ jobs:
               cluster-name: ${{ secrets.CLUSTER_NAME }}
 
           - name: Run Helm Deploy
+            run: 
+             ls -lh 
+             pwd
+
+          - name: Run Helm Deploy
             run: |
               helm upgrade \
               --install \
