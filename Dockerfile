@@ -3,12 +3,18 @@ FROM nginx:alpine
 
 # Copy the HTML file to the default Nginx HTML location
 
+RUN git clone https://github.com/MicrosoftDocs/mslearn-aks-deployment-pipeline-github-actions /contoso-website
+
 COPY index.html /usr/share/nginx/html/
 
 WORKDIR /contoso-website/src
 
+
 # Copy the rest of the website files to the default Nginx HTML location
-COPY . /usr/share/nginx/html/
+COPY . /contoso-website/src
  
 # Expose port 80 to the outside world
 EXPOSE 80
+
+
+
