@@ -13,7 +13,7 @@ spec:
         app: contoso-website
     spec:
       containers:
-        - image: contoso.azurecr.io/contoso-website:{{ .Values.image.tag }}
+        - image: !IMAGE!
           name: contoso-website
           resources:
             requests:
