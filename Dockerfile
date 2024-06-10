@@ -3,7 +3,7 @@ FROM nginx:alpine
 
 # Copy the HTML file to the default Nginx HTML location
 
-RUN git clone https://github.com/MicrosoftDocs/mslearn-aks-deployment-pipeline-github-actions /contoso-website
+RUN mkdir contoso-website
 
 COPY index.html /usr/share/nginx/html/
 
