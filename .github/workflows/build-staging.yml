@@ -64,15 +64,15 @@ jobs:
 
           - name: Run Helm Deploy
             run: |
+              cd kubernetes
+              
               helm upgrade \
               --install \
               --create-namespace \
               --wait \
-              --namespace staging contoso-website \
-              kubernetes/contoso-website \
               --set image.repository=${{ secrets.ACR_NAME }} \
-              --set dns.name=${{ secrets.DNS_NAME }}
-
+              --set dns.name=${{ secrets.DNS_NAME }} \ 
+              --namespace staging contoso-website ./contoso-website
 
 
               
